@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>授業ノート</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;
+  --sidebar:#f7f6f3;
+  --border:#e9e9e7;
+  --text:#37352f;
+  --text2:#787774;
+  --text3:#b5b4b1;
+  --hover:#efefef;
+  --active:#e9e9e7;
+  --accent:#2383e2;
+  --accent-bg:#e7f3fd;
+  --tag-bg:#f1f0ef;
+  --done-bg:#f3faf3;
+  --done:#4dac6a;
+  --danger:#eb5757;
+  --r:4px;
+}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* Sidebar */
+.sidebar{width:240px;min-width:240px;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;padding-top:8px}
+.sidebar-top{padding:4px 8px 8px;display:flex;align-items:center;gap:6px;color:var(--text2);font-size:13px;font-weight:500;padding-left:16px;margin-bottom:4px}
+.sidebar-top span{font-size:16px}
+.section-label{font-size:11px;font-weight:500;color:var(--text3);padding:12px 16px 4px;letter-spacing:0.04em}
+.ch{display:flex;align-items:center;gap:6px;padding:5px 8px 5px 16px;border-radius:var(--r);cursor:pointer;font-size:13.5px;color:var(--text);transition:background 0.1s;margin:0 4px 1px}
+.ch:hover{background:var(--hover)}
+.ch.active{background:var(--active);font-weight:500}
+.ch-icon{font-size:13px;width:16px;text-align:center;flex-shrink:0}
+.ch-count{margin-left:auto;font-size:11px;color:var(--text3);background:transparent;padding:0 4px}
+.sidebar-bottom{margin-top:auto;padding:8px}
+.add-ch-btn{width:100%;padding:6px 12px;border:none;border-radius:var(--r);background:transparent;color:var(--text2);font-size:13px;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background 0.1s}
+.add-ch-btn:hover{background:var(--hover)}
+.drive-pill{font-size:11px;color:var(--done);padding:4px 12px;display:flex;align-items:center;gap:4px}
+
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{padding:12px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.page-title{font-size:20px;font-weight:600;flex:1;letter-spacing:-0.02em;color:var(--text)}
+.save-lbl{font-size:12px;color:var(--text3)}
+.search{display:flex;align-items:center;gap:6px;background:var(--sidebar);border:1px solid var(--border);border-radius:var(--r);padding:5px 10px}
+.search input{border:none;background:transparent;font-size:13px;color:var(--text);outline:none;width:150px;font-family:inherit}
+.search input::placeholder{color:var(--text3)}
+
+/* Entries */
+.entries{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:1px}
+.entry{border-radius:var(--r);padding:10px 12px;transition:background 0.1s;cursor:default;border-bottom:1px solid var(--border)}
+.entry:last-child{border-bottom:none}
+.entry:hover{background:var(--sidebar)}
+.entry.done{opacity:0.5}
+.entry-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.edate{font-size:12px;color:var(--text3);font-variant-numeric:tabular-nums}
+.etag{font-size:11px;padding:2px 8px;border-radius:3px;background:var(--tag-bg);color:var(--text2);font-weight:500}
+.ebtn{margin-left:auto;font-size:11px;padding:2px 10px;border-radius:3px;cursor:pointer;border:1px solid var(--border);color:var(--text2);background:none;font-family:inherit;transition:all 0.1s}
+.ebtn:hover{background:var(--hover)}
+.ebtn.done{background:var(--done-bg);color:var(--done);border-color:transparent}
+.edel{font-size:11px;padding:2px 6px;border-radius:3px;cursor:pointer;border:none;color:var(--text3);background:none;font-family:inherit;transition:all 0.1s}
+.edel:hover{color:var(--danger)}
+.ebody{font-size:13.5px;color:var(--text);line-height:1.8;white-space:pre-wrap}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text3);font-size:13px;gap:8px}
+.empty-icon{font-size:32px;opacity:0.4}
+
+/* Input */
+.input-wrap{border-top:1px solid var(--border);padding:16px 24px;flex-shrink:0;background:var(--bg)}
+.irow{display:flex;gap:8px;margin-bottom:8px}
+.irow input{font-size:13px;padding:6px 10px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);color:var(--text);outline:none;font-family:inherit;flex:1}
+.irow input:focus{border-color:#aaa;background:var(--bg)}
+textarea.ti{width:100%;font-size:13.5px;padding:10px 12px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);color:var(--text);outline:none;resize:none;font-family:inherit;line-height:1.7}
+textarea.ti:focus{border-color:#aaa}
+.iactions{display:flex;gap:8px;margin-top:8px;align-items:center}
+.btn{padding:6px 14px;border-radius:var(--r);font-size:13px;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text2);font-family:inherit;font-weight:500;transition:all 0.1s;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{background:var(--hover)}
+.btn-primary{background:var(--text);color:#fff;border-color:transparent}
+.btn-primary:hover{background:#1a1917}
+.btn-ai{color:var(--accent);border-color:#c9dff6}
+.btn-ai:hover{background:var(--accent-bg)}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+
+/* Modal */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal{background:#fff;border-radius:8px;border:1px solid var(--border);padding:24px;width:360px;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:flex;flex-direction:column;gap:14px}
+.modal h3{font-size:16px;font-weight:600}
+.modal input,.modal select{width:100%;font-size:13px;padding:7px 10px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);color:var(--text);outline:none;font-family:inherit}
+.modal input:focus,.modal select:focus{border-color:#aaa}
+.mlabel{font-size:12px;color:var(--text2);margin-bottom:3px}
+.mactions{display:flex;gap:8px;justify-content:flex-end}
+
+/* Setup */
+.setup{flex:1;display:flex;align-items:center;justify-content:center;padding:40px;background:var(--bg)}
+.setup-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:32px;max-width:420px;width:100%;box-shadow:0 4px 16px rgba(0,0,0,0.06);display:flex;flex-direction:column;gap:14px}
+.setup-card h2{font-size:22px;font-weight:600;letter-spacing:-0.02em}
+.setup-card p{font-size:13px;color:var(--text2);line-height:1.7}
+.setup-card a{color:var(--accent)}
+.si{width:100%;font-size:13px;padding:8px 12px;border-radius:var(--r);border:1px solid var(--border);background:var(--sidebar);color:var(--text);outline:none;font-family:monospace}
+.si:focus{border-color:#aaa;background:#fff}
+.notice{font-size:11px;color:var(--text3);background:var(--sidebar);border-radius:var(--r);padding:8px 12px;line-height:1.6}
+.step-label{font-size:11px;font-weight:500;color:var(--accent);letter-spacing:0.05em}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+</style>
+</head>
+<body>
+
+<div id="setupScreen" class="app" style="display:none">
+  <div class="setup">
+    <div class="setup-card">
+      <h2>授業ノート</h2>
+      <div class="step-label">STEP 1 — Anthropic APIキー</div>
+      <p>AIで授業まとめを整形するためのAPIキーを入力してください。<br><a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a> から取得できます。</p>
+      <input class="si" type="password" id="apiKeyInput" placeholder="sk-ant-..." />
+      <div class="notice">キーはこのブラウザにのみ保存されます。外部には送信されません。</div>
+      <button class="btn btn-primary" onclick="saveApiKey()" style="justify-content:center">次へ →</button>
+    </div>
+  </div>
+</div>
+
+<div id="googleScreen" class="app" style="display:none">
+  <div class="setup">
+    <div class="setup-card">
+      <h2>授業ノート</h2>
+      <div class="step-label">STEP 2 — Googleドライブ連携</div>
+      <p>授業データをGoogleドライブに自動保存します。<br>Googleアカウントでログインしてください。</p>
+      <button class="btn" onclick="loginGoogle()" style="justify-content:center;font-size:14px;padding:10px;border-color:#c9dff6;color:var(--accent)">
+        Googleアカウントでログイン
+      </button>
+      <div class="notice">Googleドライブに「jyugyo_note_data.json」を作成して保存します。</div>
+    </div>
+  </div>
+</div>
+
+<div id="mainApp" class="app" style="display:none">
+  <div class="sidebar">
+    <div class="sidebar-top"><span>📚</span> 授業ノート</div>
+    <div id="channelList"></div>
+    <div class="sidebar-bottom">
+      <button class="add-ch-btn" onclick="openAddCh()">＋ チャンネル追加</button>
+      <div class="drive-pill" id="drivePill">✓ Googleドライブ連携済み</div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title" id="pageTitle">チャンネルを選択</div>
+      <span class="save-lbl" id="saveLbl"></span>
+      <div class="search">🔍 <input type="text" placeholder="検索…" id="searchInput" oninput="renderEntries()"></div>
+    </div>
+    <div class="entries" id="entriesArea">
+      <div class="empty"><div class="empty-icon">📄</div>左からチャンネルを選んでください</div>
+    </div>
+    <div class="input-wrap" id="inputWrap" style="display:none">
+      <div class="irow">
+        <input type="date" id="eDate" style="flex:0 0 140px">
+        <input type="text" id="eTag" placeholder="タグ（例：発音・文法・会話）">
+      </div>
+      <textarea class="ti" id="eContent" rows="4" placeholder="ZoomのAIまとめを貼り付け、またはここに入力…"></textarea>
+      <div class="iactions">
+        <button class="btn btn-ai" id="aiBtn" onclick="aiFormat()">✦ AIで整形</button>
+        <button class="btn btn-primary" onclick="saveEntry()" style="margin-left:auto">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modal"></div>
+
+<script>
+const CLIENT_ID='406153918517-sm5d2mck6dh07svua59ke4i0fpse4797.apps.googleusercontent.com';
+const SCOPES='https://www.googleapis.com/auth/drive.file';
+const FNAME='jyugyo_note_data.json';
+let state={channels:[],entries:[]};
+let activeCh=null,apiKey='',token='',fileId='',saving=false;
+
+function gk(){return localStorage.getItem('jn_ak')||''}
+function saveApiKey(){
+  const k=document.getElementById('apiKeyInput').value.trim();
+  if(!k.startsWith('sk-')){alert('正しいAPIキーを入力してください');return}
+  localStorage.setItem('jn_ak',k);apiKey=k;
+  show('setupScreen',false);show('googleScreen',true);
+}
+function loginGoogle(){
+  const uri='https://ekoune.github.io/lesson-notes/';
+  location.href=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(uri)}&response_type=token&scope=${encodeURIComponent(SCOPES)}&prompt=consent`;
+}
+function show(id,v){document.getElementById(id).style.display=v?'flex':'none'}
+function setSave(t){document.getElementById('saveLbl').textContent=t}
+
+async function driveFind(){
+  const r=await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${FNAME}' and trashed=false&fields=files(id)`,{headers:{Authorization:`Bearer ${token}`}});
+  const d=await r.json();
+  if(d.files&&d.files.length>0){fileId=d.files[0].id;return true}
+  return false;
+}
+async function driveLoad(){
+  const found=await driveFind();
+  if(!found)return null;
+  const r=await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,{headers:{Authorization:`Bearer ${token}`}});
+  try{return JSON.parse(await r.text())}catch{return null}
+}
+async function driveSave(){
+  if(saving)return;saving=true;setSave('保存中…');
+  try{
+    const body=JSON.stringify(state);
+    if(fileId){
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,{method:'PATCH',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body});
+    }else{
+      const form=new FormData();
+      form.append('metadata',new Blob([JSON.stringify({name:FNAME,mimeType:'application/json'})],{type:'application/json'}));
+      form.append('file',new Blob([body],{type:'application/json'}));
+      const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{Authorization:`Bearer ${token}`},body:form});
+      fileId=(await r.json()).id;
+    }
+    setSave('保存済み ✓');setTimeout(()=>setSave(''),3000);
+  }catch{setSave('保存失敗')}
+  saving=false;
+}
+
+async function startApp(){
+  show('googleScreen',false);show('mainApp',true);
+  setSave('読み込み中…');
+  try{
+    const saved=await driveLoad();
+    if(saved&&Array.isArray(saved.channels)){state=saved;}
+    else{
+      state={
+        channels:[{id:'ch1',name:'サンプル生徒さん',type:'individual'},{id:'ch2',name:'サンプルグループ',type:'group'}],
+        entries:[{id:'e1',channelId:'ch1',date:today(),tag:'発音',content:'【今日やったこと】\n・母音の発音練習\n・単語ドリル\n\n【次回の課題】\n・単語リスト10個練習',done:false}]
+      };
+      await driveSave();
+    }
+  }catch{setSave('')}
+  renderAll();
+  if(state.channels.length>0)selectCh(state.channels[0].id);
+}
+
+function today(){return new Date().toISOString().split('T')[0]}
+function renderAll(){renderChannels();renderEntries()}
+
+function renderChannels(){
+  const el=document.getElementById('channelList');
+  const indiv=state.channels.filter(c=>c.type==='individual');
+  const group=state.channels.filter(c=>c.type==='group');
+  const cnt=id=>state.entries.filter(e=>e.channelId===id).length;
+  let h='';
+  if(indiv.length){
+    h+='<div class="section-label">個人レッスン</div>';
+    indiv.forEach(c=>{const n=cnt(c.id);h+=`<div class="ch${activeCh===c.id?' active':''}" onclick="selectCh('${c.id}')"><span class="ch-icon">👤</span>${esc(c.name)}${n?`<span class="ch-count">${n}</span>`:''}</div>`});
+  }
+  if(group.length){
+    h+='<div class="section-label">グループクラス</div>';
+    group.forEach(c=>{const n=cnt(c.id);h+=`<div class="ch${activeCh===c.id?' active':''}" onclick="selectCh('${c.id}')"><span class="ch-icon">👥</span>${esc(c.name)}${n?`<span class="ch-count">${n}</span>`:''}</div>`});
+  }
+  el.innerHTML=h;
+}
+
+function selectCh(id){
+  activeCh=id;
+  const ch=state.channels.find(c=>c.id===id);
+  document.getElementById('pageTitle').textContent=ch?ch.name:'';
+  document.getElementById('inputWrap').style.display='';
+  document.getElementById('eDate').value=today();
+  renderChannels();renderEntries();
+}
+
+function renderEntries(){
+  if(!activeCh)return;
+  const area=document.getElementById('entriesArea');
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  let entries=state.entries.filter(e=>e.channelId===activeCh);
+  if(q)entries=entries.filter(e=>e.content.toLowerCase().includes(q)||(e.tag||'').toLowerCase().includes(q)||e.date.includes(q));
+  entries.sort((a,b)=>b.date.localeCompare(a.date));
+  if(!entries.length){
+    area.innerHTML=`<div class="empty"><div class="empty-icon">📝</div>${q?'該当なし':'まだ記録がありません。下から追加してください。'}</div>`;
+    return;
+  }
+  area.innerHTML=entries.map(e=>`
+    <div class="entry${e.done?' done':''}">
+      <div class="entry-top">
+        <span class="edate">${e.date}</span>
+        ${e.tag?`<span class="etag">${esc(e.tag)}</span>`:''}
+        <button class="ebtn${e.done?' done':''}" onclick="toggleDone('${e.id}')">${e.done?'✓ 完了':'未済'}</button>
+        <button class="edel" onclick="delEntry('${e.id}')">削除</button>
+      </div>
+      <div class="ebody">${esc(e.content)}</div>
+    </div>`).join('');
+}
+
+function toggleDone(id){const e=state.entries.find(e=>e.id===id);if(e){e.done=!e.done;renderEntries();renderChannels();driveSave()}}
+function delEntry(id){if(!confirm('削除しますか？'))return;state.entries=state.entries.filter(e=>e.id!==id);renderEntries();renderChannels();driveSave()}
+
+async function saveEntry(){
+  const content=document.getElementById('eContent').value.trim();
+  if(!content||!activeCh)return;
+  state.entries.unshift({id:'e'+Date.now(),channelId:activeCh,date:document.getElementById('eDate').value||today(),tag:document.getElementById('eTag').value.trim(),content,done:false});
+  document.getElementById('eContent').value='';
+  document.getElementById('eTag').value='';
+  renderEntries();renderChannels();await driveSave();
+}
+
+async function aiFormat(){
+  const content=document.getElementById('eContent').value.trim();
+  if(!content){alert('内容を入力してください');return}
+  if(!apiKey){alert('APIキーが設定されていません');return}
+  const btn=document.getElementById('aiBtn');
+  btn.disabled=true;btn.textContent='整形中…';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1000,
+        system:'語学講師の授業まとめを整形してください。以下の形式で出力してください：\n【今日やったこと】\n・〇〇\n\n【次回の課題】\n・〇〇\n（課題なければ省略）\n整形したテキストだけを返してください。',
+        messages:[{role:'user',content}]})
+    });
+    const d=await res.json();
+    document.getElementById('eContent').value=d.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+  }catch{alert('AI整形に失敗しました')}
+  btn.disabled=false;btn.textContent='✦ AIで整形';
+}
+
+function openAddCh(){
+  document.getElementById('modal').innerHTML=`
+    <div class="overlay" onclick="if(event.target===this)closeMod()">
+      <div class="modal">
+        <h3>チャンネルを追加</h3>
+        <div><div class="mlabel">名前</div><input type="text" id="chName" placeholder="例：山田さん、水曜グループ" autofocus></div>
+        <div><div class="mlabel">種類</div>
+        <select id="chType"><option value="individual">👤 個人レッスン</option><option value="group">👥 グループクラス</option></select></div>
+        <div class="mactions">
+          <button class="btn" onclick="closeMod()">キャンセル</button>
+          <button class="btn btn-primary" onclick="addCh()">追加</button>
+        </div>
+      </div>
+    </div>`;
+}
+async function addCh(){
+  const name=document.getElementById('chName').value.trim();
+  const type=document.getElementById('chType').value;
+  if(!name)return;
+  const ch={id:'ch'+Date.now(),name,type};
+  state.channels.push(ch);closeMod();renderChannels();selectCh(ch.id);await driveSave();
+}
+function closeMod(){document.getElementById('modal').innerHTML=''}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+// Init
+apiKey=gk();
+const hashToken=new URLSearchParams(location.hash.substring(1)).get('access_token')||'';
+if(hashToken){
+  token=hashToken;
+  history.replaceState({},'',location.pathname);
+  localStorage.setItem('jn_tk',token);
+  if(!apiKey)show('setupScreen',true);else startApp();
+}else{
+  const saved=localStorage.getItem('jn_tk');
+  if(saved){token=saved;if(!apiKey)show('setupScreen',true);else startApp();}
+  else if(!apiKey)show('setupScreen',true);
+  else show('googleScreen',true);
+}
+</script>
+</body>
+</html>
